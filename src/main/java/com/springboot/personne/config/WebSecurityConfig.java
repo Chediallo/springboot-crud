@@ -38,8 +38,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> 
-                        authorize.mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        .anyRequest().authenticated()
+                      //  authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                        authorize.anyRequest().authenticated()
                 ).httpBasic(Customizer.withDefaults());
         
         
