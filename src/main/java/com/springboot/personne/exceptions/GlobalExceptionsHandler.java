@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,44 +24,39 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * @author Mohamed
  */
 @ControllerAdvice
-public class GlobalExceptionsHandler extends ResponseEntityExceptionHandler{
-    
-    
+public class GlobalExceptionsHandler extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler(ResourceNotFoundExceptions.class)
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundExceptions exception,
-            WebRequest request){
-        
+            WebRequest request) {
+
         ErrorDetails errorDetails = new ErrorDetails(new Date(),
                 exception.getMessage(), request.getDescription(false));
-        
-        return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
-    
-    
+
     @ExceptionHandler(PersonneApiExceptions.class)
     public ResponseEntity<ErrorDetails> handlePersonneApiExceptions(PersonneApiExceptions exception,
-            WebRequest request){
-        
+            WebRequest request) {
+
         ErrorDetails errorDetails = new ErrorDetails(new Date(),
                 exception.getMessage(), request.getDescription(false));
-        
-        
-        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handlePersonneApiExceptions(Exception exception,
-            WebRequest request){
-        
+            WebRequest request) {
+
         ErrorDetails errorDetails = new ErrorDetails(new Date(),
                 exception.getMessage(), request.getDescription(false));
-        
-        
-        return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
-    
-    
-     @Override
+
+    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
 
@@ -73,5 +69,14 @@ public class GlobalExceptionsHandler extends ResponseEntityExceptionHandler{
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-    
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception,
+            WebRequest webRequest) {
+
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
+                webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
 }
